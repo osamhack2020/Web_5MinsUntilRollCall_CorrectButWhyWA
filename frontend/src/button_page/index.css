@@ -1,0 +1,14 @@
+.main-button {
+  width: 30vw;
+  height: 70vh;
+}
+
+.main-button > p {
+  font-size: 5rem;
+}
+
+.button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
