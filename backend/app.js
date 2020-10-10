@@ -2,16 +2,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const crypto = require("crypto");
 const db = require("./db.js");
-
-db.query("SELECT * FROM example", (err, rows, fields) => {
-  if (err) throw err;
-  console.log(rows);
-});
-
+const cors = require("cors");
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
@@ -21,6 +17,7 @@ app.post("/sign_in", (req, res) => {
 });
 
 app.post("/sign_up", (req, res, next) => {
+  console.log(req.body);
   let body = req.body;
 
   let inputPassword = body.password;
@@ -30,8 +27,8 @@ app.post("/sign_up", (req, res, next) => {
     .update(inputPassword + salt)
     .digest("hex");
 
-  let sql = "INSERT INTO user (email, password, name, salt) VALUES(?, ?, ?)";
-  let params = [body.email, hashPassword, body.name, body.salt];
+  let sql = "INSERT INTO user (email, password, name, salt) VALUES(?, ?, ?, ?)";
+  let params = [body.email, hashPassword, body.name, salt];
   db.query(sql, params, (err, rows, fields) => {
     if (err) {
       console.log(err);
