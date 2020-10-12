@@ -7,6 +7,7 @@ const session = require("express-session");
 const app = express();
 
 const OK = 200;
+const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
 
 const makeHashPassword = (password, salt) => {
@@ -41,12 +42,18 @@ app.get("/auth/status", (req, res) => {
 });
 
 app.post("/auth/sign_in", (req, res) => {
+  console.log("/auth/sign_in");
+  console.log(req.body);
+
   let sql = `SELECT * FROM user WHERE email="${req.body.email}"`;
   db.query(sql, (err, rows, fields) => {
     if (err) {
+      console.log("Error!");
       console.log(err);
       res.status(UNAUTHORIZED).send("sql error");
     } else {
+      if (rows.length == 0)
+        res.status(UNAUTHORIZED).send("Your information is not on DB");
       let { email, password, name, salt } = rows[0];
       let hashPassword = makeHashPassword(req.body.password, salt);
 
@@ -69,12 +76,15 @@ app.post("/auth/sign_in", (req, res) => {
   });
 });
 
-app.post("/auth/sign_up", (req, res, next) => {
+app.post("/auth/sign_up", (req, res) => {
   let body = req.body;
 
   let password = body.password;
   let salt = Math.round(new Date().valueOf() + Math.random()) + "";
   let hashPassword = makeHashPassword(password, salt);
+
+  console.log("/auth/sign_up");
+  console.log(body);
 
   let sql = "INSERT INTO user (email, password, name, salt) VALUES(?, ?, ?, ?)";
   let params = [body.email, hashPassword, body.name, salt];
@@ -87,6 +97,27 @@ app.post("/auth/sign_up", (req, res, next) => {
       res.status(OK).send("sign up success");
     }
   });
+});
+
+app.get("/database", (req, res) => {
+  if (!req.session.name) {
+    console.log("/database");
+    console.log(req.session);
+    res.status(UNAUTHORIZED).send("You didn't sign in");
+  } else {
+    console.log("sign in Complete!!");
+    let admin_name = req.session.name;
+    let sql = `SELECT * FROM soldier WHERE admin_name="${admin_name}"`;
+    db.query(sql, (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(BAD_REQUEST).send("Something is Wrong.");
+      } else {
+        console.log(rows);
+        res.status(OK).send(rows);
+      }
+    });
+  }
 });
 
 app.listen(8081, () => console.log("Example app listening on port 8081!"));
