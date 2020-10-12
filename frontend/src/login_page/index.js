@@ -8,6 +8,8 @@ import {
   Checkbox,
   Message,
 } from "semantic-ui-react";
+import { Redirect } from "react-router-dom";
+import Loading from "../Component/Loading.js";
 
 const fetch = require("node-fetch");
 
@@ -18,6 +20,7 @@ const LoginPage = () => {
   const [name, setName] = React.useState("");
   const [officer, setOfficer] = React.useState(false);
   const [errMsg, setErrMsg] = React.useState("");
+  const [redirect, setRedirect] = React.useState(false);
 
   const onChangeEmail = (e) => {
     setEmail(e.target.value);
@@ -39,7 +42,7 @@ const LoginPage = () => {
     console.log("Change: " + officer);
   };
 
-  const checkFormValid = () => {
+  const checkSignUpFormValid = () => {
     let formValid = false;
     if (email.length === 0) {
       setErrMsg("Email is empty");
@@ -56,11 +59,11 @@ const LoginPage = () => {
     return formValid;
   };
 
-  const handleSubmit = (e) => {
-    if (!checkFormValid()) return;
+  const signUpSubmit = (e) => {
+    if (!checkSignUpFormValid()) return;
 
-    console.log("submit form to backend server");
-    fetch("http://18.219.142.74:8081/sign_up", {
+    console.log("submit sign up form to backend server");
+    fetch("http://18.219.142.74:8081/auth/sign_up", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -68,6 +71,7 @@ const LoginPage = () => {
         password: password,
         name: name,
       }),
+      credentials: "include",
     }).then((res) => {
       console.log(res);
       return;
@@ -77,6 +81,38 @@ const LoginPage = () => {
     e.preventDefault();
   };
 
+  const checkSignInFormValid = () => {
+    let formValid = false;
+    if (email.length === 0) {
+      setErrMsg("Email is empty");
+    } else if (password.length === 0) {
+      setErrMsg("Password is empty");
+    } else {
+      formValid = true;
+    }
+    return formValid;
+  };
+
+  const signInSubmit = (e) => {
+    if (!checkSignInFormValid()) return;
+    console.log("submit sign in form to backend server");
+    fetch("http://18.219.142.74:8081/auth/sign_in", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+      credentials: "include",
+    }).then((res) => {
+      console.log(res);
+      if (res.ok) setRedirect(true);
+    });
+    e.preventDefault();
+  };
+
+  if (redirect) return <Redirect to="/main" />;
+
   return (
     <div className="form-wrapper">
       <div className="form-box">
@@ -85,8 +121,10 @@ const LoginPage = () => {
             <Form.Input
               icon="user"
               iconPosition="left"
-              placeholder="Username"
+              placeholder="Email"
               className="form-shadow"
+              value={email}
+              onChange={onChangeEmail}
             />
             <Form.Input
               icon="lock"
@@ -94,85 +132,86 @@ const LoginPage = () => {
               type="password"
               placeholder="Password"
               className="form-shadow"
+              value={password}
+              onChange={onChangePassword}
             />
           </Form.Field>
 
-          <div>
-            <Button
-              inverted
-              color="violet"
-              type="submit"
-              className="sign-button"
-            >
-              Sign in
-            </Button>
+          <Button
+            inverted
+            color="violet"
+            type="submit"
+            className="sign-button"
+            onClick={signInSubmit}
+          >
+            Sign in
+          </Button>
 
-            <Divider horizontal> OR </Divider>
+          {errMsg !== "" && <Message error header="Error!" content={errMsg} />}
 
-            <Modal
-              onClose={() => setOpen(false)}
-              onOpen={() => setOpen(true)}
-              open={open}
-              trigger={
-                <Button inverted color="green" className="sign-button">
-                  Sign up
-                </Button>
-              }
-              size="tiny"
-            >
-              <Modal.Header>Sign up</Modal.Header>
+          <Divider horizontal> OR </Divider>
 
-              <Modal.Content>
-                <Form>
-                  <Form.Field>
-                    <label>Email</label>
-                    <input
-                      placeholder="Email"
-                      value={email}
-                      onChange={onChangeEmail}
-                    />
-                  </Form.Field>
-                  <Form.Field>
-                    <label>Password</label>
-                    <input
-                      placeholder="Password"
-                      value={password}
-                      onChange={onChangePassword}
-                    />
-                  </Form.Field>
-                  <Form.Field>
-                    <label>Name</label>
-                    <input placeholder="Name" onChange={onChangeName} />
-                  </Form.Field>
-                  <Form.Field>
-                    <Checkbox
-                      label="I'm a military officer."
-                      onChange={onChangeOfficer}
-                    />
-                  </Form.Field>
-                </Form>
+          <Modal
+            onClose={() => setOpen(false)}
+            onOpen={() => setOpen(true)}
+            open={open}
+            trigger={
+              <Button inverted color="green" className="sign-button">
+                Sign up
+              </Button>
+            }
+            size="tiny"
+          >
+            <Modal.Header>Sign up</Modal.Header>
 
-                {errMsg !== "" && (
-                  <Message error header="Error!" content={errMsg} />
-                )}
-              </Modal.Content>
+            <Modal.Content>
+              <Form>
+                <Form.Field>
+                  <label>Email</label>
+                  <input
+                    placeholder="Email"
+                    value={email}
+                    onChange={onChangeEmail}
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <label>Password</label>
+                  <input
+                    placeholder="Password"
+                    value={password}
+                    onChange={onChangePassword}
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <label>Name</label>
+                  <input placeholder="Name" onChange={onChangeName} />
+                </Form.Field>
+                <Form.Field>
+                  <Checkbox
+                    label="I'm a military officer."
+                    onChange={onChangeOfficer}
+                  />
+                </Form.Field>
+              </Form>
 
-              <Modal.Actions>
-                <Button color="black" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-                <Button
-                  content="Sign up"
-                  labelPosition="right"
-                  icon="checkmark"
-                  positive
-                  onClick={(e) => {
-                    handleSubmit(e);
-                  }}
-                />
-              </Modal.Actions>
-            </Modal>
-          </div>
+              {errMsg !== "" && (
+                <Message error header="Error!" content={errMsg} />
+              )}
+            </Modal.Content>
+
+            <Modal.Actions>
+              <Button color="black" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                content="Sign up"
+                labelPosition="right"
+                icon="checkmark"
+                positive
+                onClick={signUpSubmit}
+              />
+            </Modal.Actions>
+          </Modal>
         </Form>
       </div>
     </div>
