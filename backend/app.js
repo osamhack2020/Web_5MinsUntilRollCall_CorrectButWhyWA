@@ -9,6 +9,7 @@ const app = express();
 const OK = 200;
 const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
+const DEFAULT_DATETIME = "1000-01-01 00:00:00";
 
 const makeHashPassword = (password, salt) => {
   return crypto
@@ -51,27 +52,30 @@ app.post("/auth/sign_in", (req, res) => {
       console.log("Error!");
       console.log(err);
       res.status(UNAUTHORIZED).send("sql error");
+      return;
+    }
+
+    if (rows.length == 0) {
+      res.status(UNAUTHORIZED).send("Your information is not on DB");
+      return;
+    }
+    let { email, password, name, salt } = rows[0];
+    let hashPassword = makeHashPassword(req.body.password, salt);
+
+    if (password === hashPassword) {
+      console.log("Password is correct");
+      req.session.email = email;
+      req.session.name = name;
+      req.session.save();
+
+      console.log(req.session);
+      res
+        .set({ "Access-Control-Expose-Headers": "Set-Cookie" })
+        .status(OK)
+        .send("password is correct");
     } else {
-      if (rows.length == 0)
-        res.status(UNAUTHORIZED).send("Your information is not on DB");
-      let { email, password, name, salt } = rows[0];
-      let hashPassword = makeHashPassword(req.body.password, salt);
-
-      if (password === hashPassword) {
-        console.log("Password is correct");
-        req.session.email = email;
-        req.session.name = name;
-        req.session.save();
-
-        console.log(req.session);
-        res
-          .set({ "Access-Control-Expose-Headers": "Set-Cookie" })
-          .status(OK)
-          .send("password is correct");
-      } else {
-        console.log("Password is incorrect");
-        res.status(UNAUTHORIZED).send("password is incorrect");
-      }
+      console.log("Password is incorrect");
+      res.status(UNAUTHORIZED).send("password is incorrect");
     }
   });
 });
@@ -99,9 +103,9 @@ app.post("/auth/sign_up", (req, res) => {
   });
 });
 
-app.get("/database", (req, res) => {
+app.get("/database/user", (req, res) => {
   if (!req.session.name) {
-    console.log("/database");
+    console.log("/database/user");
     console.log(req.session);
     res.status(UNAUTHORIZED).send("You didn't sign in");
   } else {
@@ -115,6 +119,57 @@ app.get("/database", (req, res) => {
       } else {
         console.log(rows);
         res.status(OK).send(rows);
+      }
+    });
+  }
+});
+
+app.post("/database/register", (req, res) => {
+  if (!req.session.name) {
+    console.log("/database/user");
+    console.log(req.session);
+    res.status(UNAUTHORIZED).send("You didn't sign in");
+  } else {
+    let admin_name = req.session.name;
+    let sql =
+      "INSERT INTO soldier (admin_name, name, military_number, phone_out, phone_in, roll) VALUES(?, ?, ?, ?, ?, ?)";
+    let params = [
+      admin_name,
+      req.body.name,
+      req.body.military_number,
+      DEFAULT_DATETIME,
+      DEFAULT_DATETIME,
+      DEFAULT_DATETIME,
+    ];
+
+    db.query(sql, params, (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(BAD_REQUEST).send("Something is Wrong.");
+      } else {
+        console.log(rows);
+        res.status(OK).send("Register Soldier Complete");
+      }
+    });
+  }
+});
+
+app.post("/database/delete", (req, res) => {
+  if (!req.session.name) {
+    res.status(UNAUTHORIZED).send("You didn't sign in");
+  } else {
+    let admin_name = req.session.name;
+    let sql =
+      "DELETE FROM soldier WHERE admin_name=? and name=? and military_number=?";
+    let params = [admin_name, req.body.name, req.body.military_number];
+
+    db.query(sql, params, (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(BAD_REQUEST).send("Some thing is Wrong.");
+      } else {
+        console.log(rows);
+        res.status(OK).send("Delete Soldier Complete");
       }
     });
   }

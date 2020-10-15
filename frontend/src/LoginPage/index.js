@@ -9,7 +9,6 @@ import {
   Message,
 } from "semantic-ui-react";
 import { Redirect } from "react-router-dom";
-import Loading from "../Component/Loading.js";
 
 const fetch = require("node-fetch");
 
@@ -184,7 +183,11 @@ const LoginPage = () => {
                 </Form.Field>
                 <Form.Field>
                   <label>Name</label>
-                  <input placeholder="Name" onChange={onChangeName} />
+                  <input
+                    placeholder="Name"
+                    value={name}
+                    onChange={onChangeName}
+                  />
                 </Form.Field>
                 <Form.Field>
                   <Checkbox

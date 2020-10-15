@@ -1,12 +1,15 @@
 import React from "react";
 import { Segment, Sidebar } from "semantic-ui-react";
-import SidebarLeft from "./component/SidebarLeft.js";
-import SidebarRight from "./component/SidebarRight.js";
-import "./index.css";
+import SidebarLeft from "./SidebarLeft";
+import SidebarRight from "./SidebarRight";
 
 const MainPage = () => {
+  const sidebarStyle = {
+    minHeight: "100vw",
+  };
+
   return (
-    <Sidebar.Pushable as={Segment} className="width-full">
+    <Sidebar.Pushable as={Segment} style={sidebarStyle}>
       <SidebarLeft />
       <SidebarRight />
     </Sidebar.Pushable>

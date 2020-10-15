@@ -1,6 +1,5 @@
 import React from "react";
 import { Menu, Sidebar, Icon } from "semantic-ui-react";
-import "../index.css";
 
 const fetch = require("node-fetch");
 
@@ -13,6 +12,7 @@ export default class SidebarLeft extends React.Component {
     const { activeItem } = this.state;
 
     console.log("get auth status");
+
     fetch("http://18.219.142.74:8081/auth/status", {
       method: "GET",
       credentials: "include",
@@ -25,11 +25,10 @@ export default class SidebarLeft extends React.Component {
     });
 
     return (
-      <Sidebar as={Menu} secondary vertical visible className="side-bar-left">
+      <Sidebar as={Menu} secondary vertical visible>
         <Menu.Item>
           <Menu.Header>
             <p>
-              Welcome!
               <Icon name="user" />
               {this.state.name}
             </p>
