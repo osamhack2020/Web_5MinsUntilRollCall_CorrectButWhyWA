@@ -1,14 +1,15 @@
 import React from "react";
 import { Modal, Form, Button } from "semantic-ui-react";
-
+import { useSelector, useDispatch } from "react-redux";
+import * as actions from "../../../../../redux/actions/index.js";
+import { soldierManagerGetArr } from "../../../../../functions/getArr.js";
 const fetch = require("node-fetch");
 
-const RegisterSoldier = ({ getTableData }) => {
-  const [open, setOpen] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [militaryNumber, setMilitaryNumber] = React.useState("");
+const RegisterSoldier = () => {
+  const dispatch = useDispatch();
+  const registerSoldier = useSelector((store) => store.registerSoldier);
 
-  const registerSoldier = (name, military_number) => {
+  const registerSoldierDatabase = (name, military_number) => {
     fetch("http://18.219.142.74:8081/database/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -20,7 +21,7 @@ const RegisterSoldier = ({ getTableData }) => {
     }).then(async (res) => {
       if (res.ok) {
         console.log(res);
-        getTableData();
+        dispatch(actions.soldierManagerSetArr(await soldierManagerGetArr()));
       } else {
         console.log(res);
       }
@@ -33,9 +34,9 @@ const RegisterSoldier = ({ getTableData }) => {
 
   return (
     <Modal
-      onClose={() => setOpen(false)}
-      onOpen={() => setOpen(true)}
-      open={open}
+      onClose={() => dispatch(actions.registerSoldierSetOpen(false))}
+      onOpen={() => dispatch(actions.registerSoldierSetOpen(true))}
+      open={registerSoldier.open}
       trigger={
         <Button
           content="Register Soldier"
@@ -56,23 +57,32 @@ const RegisterSoldier = ({ getTableData }) => {
               <label>Name</label>
               <input
                 placeholder="Hong Gildong"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={registerSoldier.name}
+                onChange={(e) =>
+                  dispatch(actions.registerSoldierSetName(e.target.value))
+                }
               />
             </Form.Field>
             <Form.Field>
               <label>Military Number</label>
               <input
                 placeholder="01-23456789"
-                value={militaryNumber}
-                onChange={(e) => setMilitaryNumber(e.target.value)}
+                value={registerSoldier.militaryNumber}
+                onChange={(e) =>
+                  dispatch(
+                    actions.registerSoldierSetMilitaryNumber(e.target.value)
+                  )
+                }
               />
             </Form.Field>
           </Form>
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
-        <Button color="black" onClick={() => setOpen(false)}>
+        <Button
+          color="black"
+          onClick={() => dispatch(actions.registerSoldierSetOpen(false))}
+        >
           Cancel
         </Button>
         <Button
@@ -80,8 +90,11 @@ const RegisterSoldier = ({ getTableData }) => {
           labelPosition="right"
           icon="checkmark"
           onClick={() => {
-            registerSoldier(name, militaryNumber);
-            setOpen(false);
+            registerSoldierDatabase(
+              registerSoldier.name,
+              registerSoldier.militaryNumber
+            );
+            dispatch(actions.registerSoldierSetOpen(false));
           }}
           positive
         />

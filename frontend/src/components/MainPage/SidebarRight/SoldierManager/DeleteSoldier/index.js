@@ -1,14 +1,16 @@
 import React from "react";
 import { Modal, Form, Button } from "semantic-ui-react";
+import { useSelector, useDispatch } from "react-redux";
+import * as actions from "../../../../../redux/actions/index.js";
+import { soldierManagerGetArr } from "../../../../../functions/getArr.js";
 
 const fetch = require("node-fetch");
 
-const DeleteSoldier = (getTableData) => {
-  const [open, setOpen] = React.useState(false);
-  const [name, setName] = React.useState("");
-  const [militaryNumber, setMilitaryNumber] = React.useState("");
+const DeleteSoldier = () => {
+  const dispatch = useDispatch();
+  const deleteSoldier = useSelector((store) => store.deleteSoldier);
 
-  const deleteSoldier = (name, military_number) => {
+  const deleteSoldierDatabase = (name, military_number) => {
     fetch("http://18.219.142.74:8081/database/delete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -20,7 +22,8 @@ const DeleteSoldier = (getTableData) => {
     }).then(async (res) => {
       if (res.ok) {
         console.log(res);
-        getTableData();
+
+        dispatch(actions.soldierManagerSetArr(await soldierManagerGetArr()));
       } else {
         console.log(res);
       }
@@ -33,9 +36,9 @@ const DeleteSoldier = (getTableData) => {
 
   return (
     <Modal
-      onClose={() => setOpen(false)}
-      onOpen={() => setOpen(true)}
-      open={open}
+      onClose={() => dispatch(actions.deleteSoldierSetOpen(false))}
+      onOpen={() => dispatch(actions.deleteSoldierSetOpen(true))}
+      open={deleteSoldier.open}
       trigger={
         <Button
           content="Delete Soldier"
@@ -56,23 +59,32 @@ const DeleteSoldier = (getTableData) => {
               <label>Name</label>
               <input
                 placeholder="Hong Gildong"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={deleteSoldier.name}
+                onChange={(e) =>
+                  dispatch(actions.deleteSoldierSetName(e.target.value))
+                }
               />
             </Form.Field>
             <Form.Field>
               <label>Military Number</label>
               <input
                 placeholder="01-23456789"
-                value={militaryNumber}
-                onChange={(e) => setMilitaryNumber(e.target.value)}
+                value={deleteSoldier.militaryNumber}
+                onChange={(e) =>
+                  dispatch(
+                    actions.deleteSoldierSetMilitaryNumber(e.target.value)
+                  )
+                }
               />
             </Form.Field>
           </Form>
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
-        <Button color="black" onClick={() => setOpen(false)}>
+        <Button
+          color="black"
+          onClick={() => dispatch(actions.deleteSoldierSetOpen(false))}
+        >
           Cancel
         </Button>
         <Button
@@ -80,8 +92,11 @@ const DeleteSoldier = (getTableData) => {
           labelPosition="right"
           icon="checkmark"
           onClick={() => {
-            deleteSoldier(name, militaryNumber);
-            setOpen(false);
+            deleteSoldierDatabase(
+              deleteSoldier.name,
+              deleteSoldier.militaryNumber
+            );
+            dispatch(actions.deleteSoldierSetOpen(false));
           }}
           negative
         />

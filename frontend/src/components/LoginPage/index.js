@@ -9,66 +9,34 @@ import {
   Message,
 } from "semantic-ui-react";
 import { Redirect } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import * as actions from "../../redux/actions/index.js";
 
 const fetch = require("node-fetch");
 
 const LoginPage = () => {
-  const [open, setOpen] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [name, setName] = React.useState("");
-  const [officer, setOfficer] = React.useState(false);
-  const [errMsg, setErrMsg] = React.useState("");
-  const [redirect, setRedirect] = React.useState(false);
+  const dispatch = useDispatch();
+  const loginPage = useSelector((store) => store.loginPage);
 
-  const onChangeEmail = (e) => {
-    setEmail(e.target.value);
-    console.log("Change: " + email);
-  };
-
-  const onChangePassword = (e) => {
-    setPassword(e.target.value);
-    console.log("Change: " + password);
-  };
-
-  const onChangeName = (e) => {
-    setName(e.target.value);
-    console.log("Change: " + name);
-  };
-
-  const onChangeOfficer = (e) => {
-    setOfficer(!officer);
-    console.log("Change: " + officer);
-  };
-
-  const checkSignUpFormValid = () => {
-    let formValid = false;
-    if (email.length === 0) {
-      setErrMsg("Email is empty");
-    } else if (password.length === 0) {
-      setErrMsg("Password is empty");
-    } else if (name.length === 0) {
-      setErrMsg("Name is empty");
-    } else if (!officer) {
-      setErrMsg("Check the box please");
-    } else {
-      setErrMsg("");
-      formValid = true;
-    }
-    return formValid;
-  };
+  const setOpen = (open) => dispatch(actions.loginPageSetOpen(open));
+  const setRedirect = (redirect) =>
+    dispatch(actions.loginPageSetRedirect(redirect));
+  const setEmail = (email) => dispatch(actions.loginPageSetEmail(email));
+  const setName = (name) => dispatch(actions.loginPageSetName(name));
+  const setOfficer = (officer) =>
+    dispatch(actions.loginPageSetOfficer(officer));
+  const setPassword = (password) =>
+    dispatch(actions.loginPageSetPassword(password));
 
   const signUpSubmit = (e) => {
-    if (!checkSignUpFormValid()) return;
-
     console.log("submit sign up form to backend server");
     fetch("http://18.219.142.74:8081/auth/sign_up", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: email,
-        password: password,
-        name: name,
+        email: loginPage.email,
+        password: loginPage.password,
+        name: loginPage.name,
       }),
       credentials: "include",
     }).then((res) => {
@@ -80,27 +48,14 @@ const LoginPage = () => {
     e.preventDefault();
   };
 
-  const checkSignInFormValid = () => {
-    let formValid = false;
-    if (email.length === 0) {
-      setErrMsg("Email is empty");
-    } else if (password.length === 0) {
-      setErrMsg("Password is empty");
-    } else {
-      formValid = true;
-    }
-    return formValid;
-  };
-
   const signInSubmit = (e) => {
-    if (!checkSignInFormValid()) return;
     console.log("submit sign in form to backend server");
     fetch("http://18.219.142.74:8081/auth/sign_in", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email: email,
-        password: password,
+        email: loginPage.email,
+        password: loginPage.password,
       }),
       credentials: "include",
     }).then((res) => {
@@ -110,7 +65,7 @@ const LoginPage = () => {
     e.preventDefault();
   };
 
-  if (redirect) return <Redirect to="/main" />;
+  if (loginPage.redirect) return <Redirect to="/main" />;
 
   return (
     <div className="form-wrapper">
@@ -122,8 +77,8 @@ const LoginPage = () => {
               iconPosition="left"
               placeholder="Email"
               className="form-shadow"
-              value={email}
-              onChange={onChangeEmail}
+              value={loginPage.email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Form.Input
               icon="lock"
@@ -131,8 +86,8 @@ const LoginPage = () => {
               type="password"
               placeholder="Password"
               className="form-shadow"
-              value={password}
-              onChange={onChangePassword}
+              value={loginPage.password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Field>
 
@@ -146,14 +101,16 @@ const LoginPage = () => {
             Sign in
           </Button>
 
-          {errMsg !== "" && <Message error header="Error!" content={errMsg} />}
+          {loginPage.errMsg !== "" && (
+            <Message error header="Error!" content={loginPage.errMsg} />
+          )}
 
           <Divider horizontal> OR </Divider>
 
           <Modal
             onClose={() => setOpen(false)}
             onOpen={() => setOpen(true)}
-            open={open}
+            open={loginPage.open}
             trigger={
               <Button inverted color="green" className="sign-button">
                 Sign up
@@ -169,36 +126,36 @@ const LoginPage = () => {
                   <label>Email</label>
                   <input
                     placeholder="Email"
-                    value={email}
-                    onChange={onChangeEmail}
+                    value={loginPage.email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </Form.Field>
                 <Form.Field>
                   <label>Password</label>
                   <input
                     placeholder="Password"
-                    value={password}
-                    onChange={onChangePassword}
+                    value={loginPage.password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </Form.Field>
                 <Form.Field>
                   <label>Name</label>
                   <input
                     placeholder="Name"
-                    value={name}
-                    onChange={onChangeName}
+                    value={loginPage.name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </Form.Field>
                 <Form.Field>
                   <Checkbox
                     label="I'm a military officer."
-                    onChange={onChangeOfficer}
+                    onChange={(e) => setOfficer(!loginPage.officer)}
                   />
                 </Form.Field>
               </Form>
 
-              {errMsg !== "" && (
-                <Message error header="Error!" content={errMsg} />
+              {loginPage.errMsg !== "" && (
+                <Message error header="Error!" content={loginPage.errMsg} />
               )}
             </Modal.Content>
 

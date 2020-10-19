@@ -5,7 +5,7 @@ import SidebarRight from "./SidebarRight";
 
 const MainPage = () => {
   const sidebarStyle = {
-    minHeight: "100vw",
+    minHeight: "100vh",
   };
 
   return (

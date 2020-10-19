@@ -1,9 +1,9 @@
 import React from "react";
 import "./App.css";
-import ButtonPage from "./button_page";
-import LoginPage from "./LoginPage";
-import MainPage from "./MainPage";
-import Loading from "./components/Loading.js";
+import ButtonPage from "./components/button_page";
+import LoginPage from "./components/LoginPage";
+import MainPage from "./components/MainPage";
+import Loading from "./components/Loading";
 import { Route, BrowserRouter } from "react-router-dom";
 
 function App() {
