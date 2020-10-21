@@ -34,7 +34,7 @@ app.use(
 app.get("/", (req, res) => res.send("Hello World!"));
 
 app.get("/auth/status", (req, res) => {
-  console.log(req.session);
+  // console.log(req.session);
   if (req.session.email) {
     res.status(OK).send(JSON.stringify(req.session));
   } else {
@@ -44,7 +44,7 @@ app.get("/auth/status", (req, res) => {
 
 app.post("/auth/sign_in", (req, res) => {
   console.log("/auth/sign_in");
-  console.log(req.body);
+  // console.log(req.body);
 
   let sql = `SELECT * FROM user WHERE email="${req.body.email}"`;
   db.query(sql, (err, rows, fields) => {
@@ -63,12 +63,12 @@ app.post("/auth/sign_in", (req, res) => {
     let hashPassword = makeHashPassword(req.body.password, salt);
 
     if (password === hashPassword) {
-      console.log("Password is correct");
+      // console.log("Password is correct");
       req.session.email = email;
       req.session.name = name;
       req.session.save();
 
-      console.log(req.session);
+      // console.log(req.session);
       res
         .set({ "Access-Control-Expose-Headers": "Set-Cookie" })
         .status(OK)
@@ -104,8 +104,8 @@ app.post("/auth/sign_up", (req, res) => {
 });
 
 app.get("/database/user", (req, res) => {
+  console.log("/database/user");
   if (!req.session.name) {
-    console.log("/database/user");
     // console.log(req.session);
     res.status(UNAUTHORIZED).send("You didn't sign in");
   } else {
@@ -176,6 +176,7 @@ app.post("/database/delete", (req, res) => {
 });
 
 app.post("/database/update/phone_in", (req, res) => {
+  console.log("/database/update/phone_in");
   let sql = "UPDATE soldier SET phone_in=? WHERE military_number=?";
   let params = [req.body.phone_in, req.body.military_number];
 

@@ -16,9 +16,8 @@ const SoldierManager = () => {
   };
 
   React.useEffect(() => {
-    setInterval(async () => {
-      dispatch(actions.soldierManagerSetArr(await soldierManagerGetArr()));
-    }, 1000);
+    (async () =>
+      dispatch(actions.soldierManagerSetArr(await soldierManagerGetArr())))();
   }, []);
 
   return (

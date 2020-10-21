@@ -9,10 +9,12 @@ const Roll = () => {
   const roll = useSelector((store) => store.roll);
 
   React.useEffect(() => {
-    (async () => {
+    const timerUid = setInterval(async () => {
+      console.log(roll.time, roll.start);
       dispatch(actions.rollSetArr(await rollGetArr(roll.time, roll.start)));
-    })();
-  }, []);
+    }, 500);
+    return () => clearInterval(timerUid);
+  }, [dispatch, roll]);
 
   const divStyle = {
     marginTop: "20px",
@@ -28,12 +30,14 @@ const Roll = () => {
     <div>
       <div style={divStyle}>
         <Button
-          content="F5"
+          circular
+          icon="refresh"
           onClick={async () => {
             dispatch(
               actions.rollSetArr(await rollGetArr(roll.time, roll.start))
             );
           }}
+          style={{ marginRight: "10px" }}
         />
         <Button
           content="Start Roll"
@@ -58,7 +62,7 @@ const Roll = () => {
           size="large"
           style={buttonStyle}
           onClick={() => {
-            dispatch(actions.rollSetStart(true));
+            dispatch(actions.rollSetStart(false));
           }}
         />
       </div>
@@ -67,8 +71,6 @@ const Roll = () => {
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
             <Table.HeaderCell>Military Number</Table.HeaderCell>
-            <Table.HeaderCell>Recent Phone Out</Table.HeaderCell>
-            <Table.HeaderCell>Recent Phone In</Table.HeaderCell>
             <Table.HeaderCell>Recent Roll</Table.HeaderCell>
           </Table.Row>
         </Table.Header>

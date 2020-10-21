@@ -8,17 +8,20 @@ const DataRow = ({
   phone_in,
   roll,
   state = "normal",
+  col = [true, true, true],
 }) => {
   const positive = state === "positive" ? true : false;
   const negative = state === "negative" ? true : false;
+
+  const [col1, col2, col3] = col;
 
   return (
     <Table.Row positive={positive} negative={negative}>
       <Table.Cell>{name}</Table.Cell>
       <Table.Cell>{military_number}</Table.Cell>
-      <Table.Cell>{phone_out}</Table.Cell>
-      <Table.Cell>{phone_in}</Table.Cell>
-      <Table.Cell>{roll}</Table.Cell>
+      {col1 && <Table.Cell>{phone_out}</Table.Cell>}
+      {col2 && <Table.Cell>{phone_in}</Table.Cell>}
+      {col3 && <Table.Cell>{roll}</Table.Cell>}
     </Table.Row>
   );
 };

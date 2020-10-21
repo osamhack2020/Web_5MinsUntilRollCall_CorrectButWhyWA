@@ -11,22 +11,39 @@ const Phone = () => {
   React.useEffect(() => {
     let update = async () => dispatch(actions.phoneSetArr(await phoneGetArr()));
     update();
-    setInterval(update, 5000);
+    setInterval(update, 1000);
   }, []);
 
+  const divStyle = {
+    marginTop: "20px",
+    marginBottom: "20px",
+    float: "right",
+  };
+
   return (
-    <Table celled selectable striped>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell>Name</Table.HeaderCell>
-          <Table.HeaderCell>Military Number</Table.HeaderCell>
-          <Table.HeaderCell>Recent Phone Out</Table.HeaderCell>
-          <Table.HeaderCell>Recent Phone In</Table.HeaderCell>
-          <Table.HeaderCell>Recent Roll</Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>{phone.arr}</Table.Body>
-    </Table>
+    <div>
+      <div style={divStyle}>
+        <Button
+          circular
+          icon="refresh"
+          onClick={async () =>
+            dispatch(actions.phoneSetArr(await phoneGetArr()))
+          }
+          style={{ marginRight: "10px" }}
+        />
+      </div>
+      <Table celled selectable striped>
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Military Number</Table.HeaderCell>
+            <Table.HeaderCell>Recent Phone Out</Table.HeaderCell>
+            <Table.HeaderCell>Recent Phone In</Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>{phone.arr}</Table.Body>
+      </Table>
+    </div>
   );
 };
 

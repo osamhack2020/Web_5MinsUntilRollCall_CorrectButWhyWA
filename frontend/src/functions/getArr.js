@@ -2,6 +2,12 @@ import React from "react";
 import DataRow from "../components/MainPage/SidebarRight/DataRow";
 
 const fetch = require("node-fetch");
+const DEFAULT_DATETIME = "1000-01-01 00:00:00";
+
+const transformInvalidDate = (date) => {
+  if (date === DEFAULT_DATETIME) return "-";
+  else return date;
+};
 
 export const soldierManagerGetArr = async () => {
   let res = await fetch("http://18.219.142.74:8081/database/user", {
@@ -11,16 +17,21 @@ export const soldierManagerGetArr = async () => {
 
   if (res.ok) {
     let data = await res.json();
-    let data_arr = data.map((info) => (
-      <DataRow
-        name={info.name}
-        military_number={info.military_number}
-        phone_out={info.phone_out}
-        phone_in={info.phone_in}
-        roll={info.roll}
-        key={info.military_number}
-      />
-    ));
+    let data_arr = data.map((info) => {
+      info.phone_out = transformInvalidDate(parser(info.phone_out));
+      info.phone_in = transformInvalidDate(parser(info.phone_in));
+      info.roll = transformInvalidDate(parser(info.roll));
+      return (
+        <DataRow
+          name={info.name}
+          military_number={info.military_number}
+          phone_out={info.phone_out}
+          phone_in={info.phone_in}
+          roll={info.roll}
+          key={info.military_number}
+        />
+      );
+    });
     return data_arr;
   } else {
     return [];
@@ -57,11 +68,12 @@ export const rollGetArr = async (time, start) => {
         <DataRow
           name={info.name}
           military_number={info.military_number}
-          phone_out={info.phone_out}
-          phone_in={info.phone_in}
-          roll={info.roll}
+          phone_out={transformInvalidDate(info.phone_out)}
+          phone_in={transformInvalidDate(info.phone_in)}
+          roll={transformInvalidDate(info.roll)}
           key={info.military_number}
           state={state}
+          col={[false, false, true]}
         />
       );
     });
@@ -114,11 +126,12 @@ export const phoneGetArr = async () => {
         <DataRow
           name={info.name}
           military_number={info.military_number}
-          phone_out={info.phone_out}
-          phone_in={info.phone_in}
-          roll={info.roll}
+          phone_out={transformInvalidDate(info.phone_out)}
+          phone_in={transformInvalidDate(info.phone_in)}
+          roll={transformInvalidDate(info.roll)}
           key={info.military_number}
           state={state}
+          col={[true, true, false]}
         />
       );
     });
