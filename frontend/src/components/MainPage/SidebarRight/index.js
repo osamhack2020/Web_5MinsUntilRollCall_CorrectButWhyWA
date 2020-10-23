@@ -10,8 +10,8 @@ const SidebarRight = () => {
 
   const sidebarRightStyle = {
     width: "85vw",
-    paddingLeft: "100px",
-    paddingRight: "100px",
+    paddingLeft: "150px",
+    paddingRight: "150px",
   };
 
   const ConditionComponent = ({ component }) => {
