@@ -10,7 +10,7 @@ const RegisterSoldier = () => {
   const registerSoldier = useSelector((store) => store.registerSoldier);
 
   const registerSoldierDatabase = (name, military_number) => {
-    fetch("http://localhost:8081/database/register", {
+    fetch("http://correctbutwhywa.koreacentral.cloudapp.azure.com:8081/database/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

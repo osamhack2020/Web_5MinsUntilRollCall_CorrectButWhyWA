@@ -15,7 +15,7 @@ const SidebarLeft = () => {
   };
 
   React.useEffect(() => {
-    fetch("http://localhost:8081/auth/status", {
+    fetch("http://correctbutwhywa.koreacentral.cloudapp.azure.com:8081/auth/status", {
       method: "GET",
       credentials: "include",
     }).then(async (res) => {

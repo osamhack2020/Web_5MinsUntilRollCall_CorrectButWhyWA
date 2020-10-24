@@ -10,7 +10,7 @@ const transformInvalidDate = (date) => {
 };
 
 export const soldierManagerGetArr = async () => {
-  let res = await fetch("http://localhost:8081/database/user", {
+  let res = await fetch("http://correctbutwhywa.koreacentral.cloudapp.azure.com:8081/database/user", {
     method: "GET",
     credentials: "include",
   });
@@ -44,7 +44,7 @@ export const parser = (sql_time) => {
 };
 
 export const rollGetArr = async (time, start) => {
-  let res = await fetch("http://localhost:8081/database/user", {
+  let res = await fetch("http://correctbutwhywa.koreacentral.cloudapp.azure.com:8081/database/user", {
     method: "GET",
     credentials: "include",
   });
@@ -104,7 +104,7 @@ export const validPhoneInTime = (phone_in, phone_out) => {
 };
 
 export const phoneGetArr = async () => {
-  let res = await fetch("http://localhost:8081/database/user", {
+  let res = await fetch("http://correctbutwhywa.koreacentral.cloudapp.azure.com:8081/database/user", {
     method: "GET",
     credentials: "include",
   });
