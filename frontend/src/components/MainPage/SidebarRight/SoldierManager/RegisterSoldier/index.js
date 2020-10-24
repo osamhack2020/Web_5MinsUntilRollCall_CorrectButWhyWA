@@ -10,7 +10,7 @@ const RegisterSoldier = () => {
   const registerSoldier = useSelector((store) => store.registerSoldier);
 
   const registerSoldierDatabase = (name, military_number) => {
-    fetch("http://18.219.142.74:8081/database/register", {
+    fetch("http://localhost:8081/database/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

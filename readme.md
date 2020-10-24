@@ -41,6 +41,14 @@ $ yarn start or npm run start
 
 ## 프로젝트 사용법 (Getting Started)
 **마크다운 문법을 이용하여 자유롭게 기재**
+```bash
+$ sudo apt-get install mysql-server mysql-client
+$ sudo service mysql start
+$ cd backend/
+$ sudo node app.js
+$ cd ../frontend/
+$ sudo npm start
+```
 
 잘 모를 경우
 구글 검색 - 마크다운 문법

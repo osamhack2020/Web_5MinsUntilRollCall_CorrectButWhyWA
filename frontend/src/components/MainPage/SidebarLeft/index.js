@@ -15,7 +15,7 @@ const SidebarLeft = () => {
   };
 
   React.useEffect(() => {
-    fetch("http://18.219.142.74:8081/auth/status", {
+    fetch("http://localhost:8081/auth/status", {
       method: "GET",
       credentials: "include",
     }).then(async (res) => {

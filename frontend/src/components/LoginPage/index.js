@@ -30,7 +30,7 @@ const LoginPage = () => {
 
   const signUpSubmit = (e) => {
     console.log("submit sign up form to backend server");
-    fetch("http://18.219.142.74:8081/auth/sign_up", {
+    fetch("http://localhost:8081/auth/sign_up", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -50,7 +50,7 @@ const LoginPage = () => {
 
   const signInSubmit = (e) => {
     console.log("submit sign in form to backend server");
-    fetch("http://18.219.142.74:8081/auth/sign_in", {
+    fetch("http://localhost:8081/auth/sign_in", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

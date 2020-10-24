@@ -11,7 +11,7 @@ const DeleteSoldier = () => {
   const deleteSoldier = useSelector((store) => store.deleteSoldier);
 
   const deleteSoldierDatabase = (name, military_number) => {
-    fetch("http://18.219.142.74:8081/database/delete", {
+    fetch("http://localhost:8081/database/delete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
