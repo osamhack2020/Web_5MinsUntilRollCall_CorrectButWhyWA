@@ -60,7 +60,7 @@ app.post("/auth/sign_in", (req, res) => {
       return;
     }
     let { email, password, name, salt } = rows[0];
-    let hashPassword = makeHashPassword(req.body.password, salt);
+    let hashPassword = makeHashPassword(req.body.pas  sword, salt);
 
     if (password === hashPassword) {
       // console.log("Password is correct");
@@ -179,6 +179,7 @@ app.post("/database/update/phone_in", (req, res) => {
   console.log("/database/update/phone_in");
   let sql = "UPDATE soldier SET phone_in=? WHERE military_number=?";
   let params = [req.body.phone_in, req.body.military_number];
+  console.log(JSON.stringify(params));
 
   db.query(sql, params, (err, rows, fields) => {
     if (err) {
